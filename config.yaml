@@ -1,0 +1,50 @@
+# Example config.yaml for use with a Windows otelcol-contrib executable
+# If EC2 is used to host then uncomment the resourcedetection/ec2 processor and add to pipelines
+# Other commented out values can be added as needed if running at command line for debugging prior to making a service
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+  hostmetrics:
+    collection_interval: 10s
+    scrapers:
+      cpu:
+      load:
+      memory:
+      disk:
+      #filesystem:
+      #process:
+      #  metrics:
+      #    process.cpu.utilization:
+      #      enabled: true
+exporters:
+  #debug:
+  #  verbosity: detailed
+  #  sampling_initial: 5
+  #  sampling_thereafter: 200
+  otlp/ls:
+    endpoint: ingest.lightstep.com:443
+    headers: 
+      "lightstep-access-token": <replace with CO Access Token>
+
+processors:
+  batch:
+  #resourcedetection/ec2:
+  #  detectors: ["ec2"]
+  resourcedetection/env:
+    detectors: [env]
+    timeout: 2s
+    override: false  
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [otlp/ls]
+      processors: [resourcedetection/env, batch]
+    metrics:
+      receivers: [otlp, hostmetrics]
+      exporters: [otlp/ls]
+      processors: [resourcedetection/env, batch]
