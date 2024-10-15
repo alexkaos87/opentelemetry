@@ -10,6 +10,20 @@ job "install-otel-collector" {
   group "otel" {
     count = 1
 
+    task "pwd" {
+      driver = "raw_exec" # esecuzione diretta del processo
+
+      config {
+        command = "powershell"
+        args    = ["pwd"]
+      }
+
+      resources {
+        cpu    = 200
+        memory = 100
+      }
+    }
+    
     task "install-collector" {
       driver = "raw_exec" # esecuzione diretta del processo
 
@@ -17,13 +31,13 @@ job "install-otel-collector" {
         command = "powershell"
         args = [
           "-ExecutionPolicy", "Bypass",
-          "-File", "C:/ProgramData/Nomad/alloc/install-otel-collector.ps1"
+          "-File", "local/install-otel-collector.ps1"
         ]
       }
 
       artifact {
-        source      = "https://github.com/alexkaos87/opentelemetry/blob/main/install-otel-collector.ps1" # sorgente dello script powershell da eseguire localmente
-        destination = "C:/ProgramData/Nomad/alloc/"
+        source      = "https://raw.githubusercontent.com/alexkaos87/opentelemetry/refs/heads/main/install-otel-collector.ps1" # sorgente dello script powershell da eseguire localmente
+        destination = "local"
       }
 
       resources {
@@ -31,9 +45,9 @@ job "install-otel-collector" {
         memory = 256
       }
 
-      service {
-        name = "otel-collector-install"
-      }
+      # service {
+      #  name = "otel-collector-install"
+      # }
     }
   }
 }

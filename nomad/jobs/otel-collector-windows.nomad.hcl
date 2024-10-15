@@ -23,16 +23,16 @@ job "otel-collector-windows" {
         memory = 512
       }
 
-      service {
-        name = "otel-collector-windows"
-        port = "otel_http"
-        check {
-          type     = "http"
-          path     = "/healthz"
-          interval = "10s"
-          timeout  = "2s"
-        }
-      }
+      # service {
+      #   name = "otel-collector-windows"
+      #   port = "otel_http"
+      #   check {
+      #     type     = "http"
+      #     path     = "/healthz"
+      #     interval = "10s"
+      #     timeout  = "2s"
+      #   }
+      # }
 
       env {
         OTEL_CONFIG_FILE = "C:/opentelemetry/config.yaml"
